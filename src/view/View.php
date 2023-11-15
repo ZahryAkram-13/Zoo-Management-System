@@ -35,6 +35,10 @@ final class View{
         $this->content =  $name . "est un animal de l'espèce " . $species;
     }
     
+    function prepareUnknownAnimalPage(){
+        $this->title = '404';
+        $this->content = 'Animal inconnu';
+    }
 }
  
 ?>

@@ -1,10 +1,12 @@
 <?php
 require 'view/View.php';
+require 'control/Controller.php';
 final class Router{
     function main(){
         $view = new View('', '');
-        $view->prepareAnimalPage('medore', 'chien');
-        $view->render();
+        $controller = new Controller($view);
+
+        $controller->showInformation('felix');
     }
 }
 
