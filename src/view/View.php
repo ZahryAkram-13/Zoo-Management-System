@@ -32,12 +32,17 @@ final class View{
 
     function prepareAnimalPage($name, $species){
         $this->title = 'Page sur ' . $name;
-        $this->content =  $name . "est un animal de l'espèce " . $species;
+        $this->content =  $name . " est un animal de l'espèce " . $species;
     }
     
     function prepareUnknownAnimalPage(){
         $this->title = '404';
         $this->content = 'Animal inconnu';
+    }
+
+    function preparePageAcueil(){
+        $this->title = 'Animals';
+        $this->content = 'Animals';
     }
 }
  
