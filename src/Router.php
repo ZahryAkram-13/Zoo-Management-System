@@ -1,7 +1,10 @@
 <?php
+require 'view/View.php';
 final class Router{
     function main(){
-        echo 'hello world';
+        $view = new View('', '');
+        $view->prepareAnimalPage('medore', 'chien');
+        $view->render();
     }
 }
 
