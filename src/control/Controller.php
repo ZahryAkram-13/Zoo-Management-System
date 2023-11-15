@@ -1,25 +1,27 @@
 <?php
 
 require_once 'view/View.php';
+require_once 'model/Animal.php';
 
 final class Controller{
     public $view;
 
-    public static $animalsTab = array(
-        'medor' => array('Médor', 'chien'),
-        'felix' => array('Félix', 'chat'),
-        'denver' => array('Denver', 'dinosaure'),
-    );
-
+    public $animalsTab;
 
     function __construct($view){
         $this->view = $view;
+        $this->animalsTab = array(
+            'medor' => new Animal('Médor', 'chien', 13),
+            'felix' => new Animal('Félix', 'chat', 10),
+            'denver' => new Animal('Denver', 'dinosaure', 52000),
+        );
+    
     }
 
     public function showInformation($id) {
-        if( key_exists($id, Controller::$animalsTab)){
-            $infos = Controller::$animalsTab[$id];
-            $this->view->prepareAnimalPage($infos[0], $infos[1]); 
+        if( key_exists($id, $this->animalsTab)){
+            $animal = $this->animalsTab[$id];
+            $this->view->prepareAnimalPage($animal); 
             
         }
         else{

@@ -30,9 +30,12 @@ final class View{
         $this->title = 'kurru';
     }
 
-    function prepareAnimalPage($name, $species){
-        $this->title = 'Page sur ' . $name;
-        $this->content =  $name . " est un animal de l'espèce " . $species;
+    function prepareAnimalPage(Animal $animal){
+        $this->title = 'Page sur ' . $animal->getName();
+        $this->content =  $animal->getName() . 
+        " est un animal de l'espèce " .
+         $animal->getEspece() . "il a " . 
+         $animal->getAge();
     }
     
     function prepareUnknownAnimalPage(){
