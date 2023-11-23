@@ -20,18 +20,21 @@ final class View
     }
 
     /* Une fonction pour échapper les caractères spéciaux de HTML,
-    * car celle de PHP nécessite trop d'options. */
-    public static function htmlesc($str) {
-        return htmlspecialchars($str,
+     * car celle de PHP nécessite trop d'options. */
+    public static function htmlesc($str)
+    {
+        return htmlspecialchars(
+            $str,
             /* on échappe guillemets _et_ apostrophes : */
             ENT_QUOTES
             /* les séquences UTF-8 invalides sont
-            * remplacées par le caractère �
-            * au lieu de renvoyer la chaîne vide…) */
+             * remplacées par le caractère �
+             * au lieu de renvoyer la chaîne vide…) */
             | ENT_SUBSTITUTE
             /* on utilise les entités HTML5 (en particulier &apos;) */
             | ENT_HTML5,
-            'UTF-8');
+            'UTF-8'
+        );
     }
 
 
@@ -84,32 +87,66 @@ final class View
         $this->title = 'Debug';
         $this->content = '<pre>' . htmlspecialchars(var_export($variable, true)) . '</pre>';
     }
-    function prepareMusicainCreationPage()
+    function prepareMusicainCreationPage($errors)
     {
+        var_dump($errors);
+        $form_name = '';
+        $form_instrument = '';
+        $form_age = '';
+        if (key_exists('form', $_SESSION)) {
+            $form = $_SESSION['form'];
+            $form_name = $form['name'];
+            $form_instrument = $form['instrument'];
+            $form_age = $form['age'];
+        }
+        $message = '';
+        if (!is_null($errors)) {
+            foreach ($errors as $key => $err) {
+                $message .= '<p>' . $err . '</p>';
+
+            }
+        }
+
+
         $this->title = 'Add Musician';
         $this->content = <<<HTML
-                <form action={$this->router->getMusicianSaveURL()} method="post">
-                <label for="name">name:</label>
-                <input type="text" id="name" name="name" required>
-               
-                <br>
-                <label for="instrument">Instrument:</label>
-                <input type="text" id="instrument" name="instrument" required>
-                <br>
+                <article class="message">
+                <div class="message-header">
+                <p>{$message}</p> 
+                </div>
+                </article>  
+                
 
-                <label for="age">Age:</label>
-                <input type="number" id="age" name="age" required>
-                <br>
+                <form class="box" action={$this->router->getMusicianSaveURL()} method="POST">
+                <label class="label" for="name">Name</label>
+                <div class="control">
+                    <input name="name" class="input" type="text" value="{$form_name}" placeholder="name" required>
+                </div>
+                <label class="label" for="instrument">Instrument</label>
+                <div class="control">
+                    <input name="instrument" class="input" type="text" value="{$form_instrument}"placeholder="instrument" required>
+                </div>
+                <label for="age" class="label">Age</label>
+                <div class="control">
+                    <input name="age" class="input" type="number" value="{$form_age}" placeholder="age" required>
+                </div>
 
-                <input type="submit" value="Submit">
+                <input class="button is-primary" type="submit" value="Submit">
                 </form>
+                       
         HTML;
 
     }
 
+    public function prepareSomthingWentWrongPage()
+    {
+        $this->title = 'Somthing Went Wrong';
+        $this->content = 'Please try later';
+    }
+
     function render()
     {
-        include 'template.html';
+        include 'templateBulma.html';
         // echo '<!DOCTYPE html>
         //      <html lang="en">
         //     <head>

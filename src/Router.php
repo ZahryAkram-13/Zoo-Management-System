@@ -38,10 +38,10 @@ final class Router
         $controller = new Controller($view, $musicianStorage);
 
         $pathInfo = isset($_SERVER['PATH_INFO']) ? trim($_SERVER['PATH_INFO'], '/') : '';
-        var_dump($pathInfo);
+        //var_dump($pathInfo);
 
         try {
-            var_dump($_GET);
+            //var_dump($_GET);
             //var_dump($_SESSION);
 
             if (key_exists('id', $_GET)) {
@@ -62,10 +62,10 @@ final class Router
 
             if (key_exists("action", $_GET)) {
                 $action = $_GET['action'];
-                echo $action;
+                //echo $action;
                 switch ($action) {
                     case 'newMusician':
-                        $controller->view->prepareMusicainCreationPage();
+                        $controller->view->prepareMusicainCreationPage(null);
                         break;
                     case 'saveMusician':
                         $controller->saveNewMusician($_POST);
