@@ -30,6 +30,21 @@ final class Controller{
     public function newMusician(){
         $this->view->prepareMusicainCreationPage();
     }
+
+    public function saveNewMusician(array $data){
+        $name = $data['name'];
+        $instrument = $data['instrument'];
+        $age = $data['age'];
+        $id = $this->musicianStorage->create(new Musician($name, $instrument, $age));
+        if ($id != null) {
+            $this->showInformation($id);
+        }
+        else{
+            $this->view->prepareDebugPage($id);
+        }
+        
+        
+    }
     
 }
 

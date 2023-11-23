@@ -44,19 +44,6 @@ final class Router
             var_dump($_GET);
             //var_dump($_SESSION);
 
-            if (key_exists("action", $_GET)) {
-                $action = $_GET['action'];
-                echo $action;
-
-                if ($action === 'newMusician') {
-                    $controller->view->prepareMusicainCreationPage();
-                } elseif ($action === 'saveMusician') {
-                    // Handle 'saveMusician' action
-                } else {
-                    $controller->showInformation('chopin');
-            }
-        }
-
             if (key_exists('id', $_GET)) {
                 $id = htmlspecialchars($_GET['id']);
                 $controller->showInformation($id);
@@ -67,12 +54,31 @@ final class Router
             } else if (empty($pathInfo)) {
 
                 $controller->view->preparePageAcueil();
-            } 
-            else {
+            } else {
                 $id = basename($pathInfo);
                 $controller->showInformation($id);
 
             }
+
+            if (key_exists("action", $_GET)) {
+                $action = $_GET['action'];
+                echo $action;
+                switch ($action) {
+                    case 'newMusician':
+                        $controller->view->prepareMusicainCreationPage();
+                        break;
+                    case 'saveMusician':
+                        $controller->saveNewMusician($_POST);
+                        break;
+
+                    default:
+                        $controller->view->prepareDebugPage($_GET);
+                        break;
+                }
+
+            }
+
+
 
         } catch (\Throwable $th) {
             echo "unexpected error " . $th;
