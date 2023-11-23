@@ -1,23 +1,85 @@
 <?php
-require 'view/View.php';
-require 'control/Controller.php';
-final class Router{
-    function main(){
-        $view = new View('', '');
-        $controller = new Controller($view);
+require_once 'view/View.php';
+require_once 'control/Controller.php';
+require_once 'model/MusicianStorageStub.php';
+final class Router
+{
 
-        if ($_SERVER["REQUEST_METHOD"] == "GET"){
-            if(key_exists('id', $_GET)){
-                $id = htmlspecialchars($_GET['id']);
-                $controller->showInformation($id);
-            }
-            else{
-                $controller->view->preparePageAcueil();
-                $controller->view->render();
-            
+    function getMusicianURL($id)
+    {
+        return '?id=' . $id;
+    }
+
+    function getMusiciansURL()
+    {
+        return '?musicians';
+    }
+
+    function getHomeURL()
+    {
+        return "";
+    }
+
+    function getMusicianCreationURL()
+    {
+        return "?action=newMusician";
+    }
+    function getMusicianSaveURL()
+    {
+        return "?action=saveMusician";
+    }
+
+
+
+
+    function main(MusicianStorage $musicianStorage)
+    {
+        $view = new View($this, '', '');
+        $controller = new Controller($view, $musicianStorage);
+
+        $pathInfo = isset($_SERVER['PATH_INFO']) ? trim($_SERVER['PATH_INFO'], '/') : '';
+        var_dump($pathInfo);
+
+        try {
+            var_dump($_GET);
+            //var_dump($_SESSION);
+
+            if (key_exists("action", $_GET)) {
+                $action = $_GET['action'];
+                echo $action;
+
+                if ($action === 'newMusician') {
+                    $controller->view->prepareMusicainCreationPage();
+                } elseif ($action === 'saveMusician') {
+                    // Handle 'saveMusician' action
+                } else {
+                    $controller->showInformation('chopin');
             }
         }
-       
+
+            if (key_exists('id', $_GET)) {
+                $id = htmlspecialchars($_GET['id']);
+                $controller->showInformation($id);
+
+            } else if (key_exists('musicians', $_GET)) {
+                $controller->showList();
+
+            } else if (empty($pathInfo)) {
+
+                $controller->view->preparePageAcueil();
+            } 
+            else {
+                $id = basename($pathInfo);
+                $controller->showInformation($id);
+
+            }
+
+        } catch (\Throwable $th) {
+            echo "unexpected error " . $th;
+        }
+
+        $controller->view->render();
+
 
     }
 }
