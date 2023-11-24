@@ -17,12 +17,15 @@ require_once 'model/AnimalStorageSession.php';
  */
 
 session_start();
-//session_reset();
+//session_destroy();
+
 
 
 //$animalStorage = new AnimalStorageStub();
 $animalStorageSession = new AnimalStorageSession();
 $router = new Router();
 $router->main($animalStorageSession);
+
+
 var_dump($_SESSION);
 ?>

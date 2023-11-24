@@ -29,6 +29,14 @@ final class Router
         return "?action=saveAnimal";
     }
 
+    function POSTredirect($url, $feedback){
+        $_SESSION['feedback'] = $feedback;
+        header("HTTP/1.1 303 See Other");
+        header("Location:$url");
+
+        exit();
+    }
+
 
 
 
@@ -38,11 +46,8 @@ final class Router
         $controller = new Controller($view, $animalStorage);
 
         $pathInfo = isset($_SERVER['PATH_INFO']) ? trim($_SERVER['PATH_INFO'], '/') : '';
-        //var_dump($pathInfo);
 
         try {
-            //var_dump($_GET);
-            //var_dump($_SESSION);
 
             if (key_exists('id', $_GET)) {
                 $id = htmlspecialchars($_GET['id']);
@@ -52,7 +57,6 @@ final class Router
                 $controller->showList();
 
             } else if (empty($pathInfo)) {
-
                 $controller->view->preparePageAcueil();
             } else {
                 $id = basename($pathInfo);
@@ -62,8 +66,6 @@ final class Router
 
             if (key_exists("action", $_GET)) {
                 $action = $_GET['action'];
-                //var_dump($_POST);
-                //echo $action;
                 switch ($action) {
                     case 'newAnimal':
                         $controller->newAnimal(new AnimalBuilder($_POST, array()));
@@ -73,7 +75,7 @@ final class Router
                         break;
 
                     default:
-                        $controller->view->prepareDebugPage($_POST);
+                        $controller->view->prepareSomthingWentWrongPage();
                         break;
                 }
 

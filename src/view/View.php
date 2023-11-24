@@ -6,8 +6,9 @@ final class View
     public $content;
     public $router;
     public $menu;
+    public $feedback;
 
-    public function __construct($router, $title = '', $content = '')
+    public function __construct($router, $feedback, $title = '', $content = '')
     {
         $this->title = $title;
         $this->content = $content;
@@ -17,6 +18,8 @@ final class View
             'Animals' => $this->router->getAnimalsURL(),
             'newAnimal' => $this->router->getAnimalCreationURL(),
         );
+
+        $this->feedback = $feedback;
     }
 
     /* Une fonction pour échapper les caractères spéciaux de HTML,
@@ -49,9 +52,12 @@ final class View
     {
         $this->title = 'Page sur ' . $Animal->getName();
         $this->content = $Animal->getName() .
-            " est un Animal trés adorable,\n il est de l'espece " .
+            " est un Animal trés adorable,\n c'est un " .
             $Animal->getEspece() . " et il a " .
-            $Animal->getAge() . ' ans ou peut etre jours qui sais !!';
+            $Animal->getAge() . ' ans !!' . '<br>' . 
+            "ces poils sont blancs tachés de noirs."  . '<br>' . 
+            "Il a une jolie moustache qui lui cache la moitié de son visage à l'extrémité de ses pattes fines" . '<br>' . 
+            "il a des griffes pointues il les utilise pour se défendre, il est gentil et mignon il n'aime que jouer" . '<br>';
     }
 
     function prepareUnknownAnimalPage()
@@ -62,7 +68,7 @@ final class View
 
     function preparePageAcueil()
     {
-        $this->title = 'Acueil';
+        $this->title = 'Accueil';
         $this->content = '';
     }
 
@@ -82,11 +88,11 @@ final class View
 
     }
 
-    public function prepareDebugPage($variable)
-    {
-        $this->title = 'Debug';
-        $this->content = '<pre>' . htmlspecialchars(var_export($variable, true)) . '</pre>';
-    }
+    // public function prepareDebugPage($variable)
+    // {
+    //     $this->title = 'Debug';
+    //     $this->content = '<pre>' . htmlspecialchars(var_export($variable, true)) . '</pre>';
+    // }
     function prepareAnimalCreationPage(AnimalBuilder $builder)
     {
         $errors = $builder->getErrors();
@@ -105,20 +111,17 @@ final class View
 
         $this->title = 'Add Animal';
         $this->content = <<<HTML
-              
-            
                 <form class="box" action={$this->router->getAnimalSaveURL()} method="POST">
                 <label class="label" for="name">Name</label>
                 <div class="control">
                     <input name="name" class="input" type="text" value="{$name}" placeholder="name" required>
                     <p class="help is-danger">
                     {$name_err}
-
                     </p>
                 </div>
                 <label class="label" for="espece">Espece</label>
                 <div class="control">
-                    <input name="espece" class="input" type="text" value="{$espece}"placeholder="espece" required>
+                    <input name="espece" class="input" type="text" value="{$espece}" placeholder="espece" required>
                     <p class="help is-danger">
                     {$espece_err}
 
@@ -142,26 +145,59 @@ final class View
 
     public function prepareSomthingWentWrongPage()
     {
-        $this->title = 'Somthing Went Wrong';
+        $this->title = 'Something Went Wrong';
         $this->content = 'Please try later';
+    }
+
+    function displayAnimalCreationSuccess($id){
+        $url = $this->router->getAnimalURL($id);
+        $feedback = 'Animal is created successfully';
+        $this->router->POSTredirect($url, $feedback);
+        
     }
 
     function render()
     {
-        include 'templateBulma.html';
-        // echo '<!DOCTYPE html>
-        //      <html lang="en">
-        //     <head>
-        //         <meta charset="UTF-8">
-        //         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        //         <title>' . $this->title . '</title>
-        //     </head>
-        //     <body>' .
-        //         '<h1>' . $this->title . '</h1>
-        //         <p>' . $this->content . '</p>
+        
+        if(is_null($this->title) || is_null($this->content)){
+            $this->prepareSomthingWentWrongPage();
+        }
+        else{
+               include 'templateBulma.html';
+          
+        }
+    //     echo '<!DOCTYPE html>
+    //     <html lang="en">
+    //    <head>
+    //        <meta charset="UTF-8">
+    //        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    //        <title>' . $this->title . '</title>
+    //    </head>
+    //    <body>' .
+    //        '<h1>' . $this->title . '</h1>
+    //        <p>' . $this->content . '</p>
 
-        //     </body>
-        //     </html>';
+    //    </body>
+    //    </html>';
+
+    //     echo '<div>
+    //     <ul>' . 
+    //     <?php
+    
+    //         foreach($this->menu as $key => $url){
+    //             echo <<<HTML
+    //                 <li class="">
+    //                     <a class="" href={$url}>{$key}</a>
+    //                 </li>
+    //                 HTML;
+    //      
+
+        
+
+
+        
+        //include 'template.html';
+
     }
 }
 

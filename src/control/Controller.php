@@ -40,13 +40,12 @@ final class Controller
     public function saveNewAnimal(array $data, array $errors)
     {
         $builder = new AnimalBuilder($data, $errors);
-        var_dump($builder);
         $animal = $builder->createAnimal();
         if (!is_null($animal)) {
             $id = $this->animalStorage->create($animal);
-            $this->showInformation($id);
+            $this->view->displayAnimalCreationSuccess($id);
         } else {
-            $this->view->prepareAnimalCreationPage($builder);
+            $this->newAnimal($builder);
         }
 
 

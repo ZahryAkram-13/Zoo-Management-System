@@ -12,6 +12,24 @@
 
 
 <body>
+    <div>
+        <?php
+        if (key_exists('feedback', $_SESSION) && !is_null($_SESSION)) {
+            
+            echo <<<HTML
+                <article class="message is-primary">
+                    <div class="message-header">
+                        <p>{$_SESSION['feedback']}</p>
+                    </div>
+                </article>
+            HTML;
+        }
+        unset($_SESSION['feedback'])
+        ?>
+        
+    </div>
+   
+    
     <nav>
         <ul class="navbar-start">
             <?php
@@ -31,19 +49,10 @@
         <h1 class="title is-1">
             <?= $this->title ?>
         </h1>
-        <h2 class="title is-2">
+        <p class="subtitle is-4">
             <?= $this->content ?>
-        </h2>
+        </p>
     </div>
-
-    
-
-
-
-
-
-
-
 
 </body>
 
