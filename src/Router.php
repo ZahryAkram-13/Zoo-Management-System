@@ -62,13 +62,14 @@ final class Router
 
             if (key_exists("action", $_GET)) {
                 $action = $_GET['action'];
+                //var_dump($_POST);
                 //echo $action;
                 switch ($action) {
                     case 'newAnimal':
-                        $controller->view->prepareAnimalCreationPage(null);
+                        $controller->newAnimal(new AnimalBuilder($_POST, array()));
                         break;
                     case 'saveAnimal':
-                        $controller->saveNewAnimal($_POST);
+                        $controller->saveNewAnimal($_POST, array());
                         break;
 
                     default:

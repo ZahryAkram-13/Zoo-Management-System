@@ -2,6 +2,7 @@
 
 require_once 'view/View.php';
 require_once 'model/Animal.php';
+require_once 'model/AnimalStorage.php';
 require_once 'model/AnimalBuilder.php';
 
 final class Controller
@@ -31,44 +32,22 @@ final class Controller
         $this->view->prepareListPage($this->animalStorage->readAll());
     }
 
-    public function newAnimal($errors)
+    public function newAnimal(AnimalBuilder $builder)
     {
-        $this->view->prepareAnimalCreationPage($errors);
+        $this->view->prepareAnimalCreationPage($builder);
     }
 
-    public function saveNewAnimal(array $data)
+    public function saveNewAnimal(array $data, array $errors)
     {
-        var_dump($data, $_SESSION);
-        if (!empty($data)) {
-            $errors = array(
-                'name' => '',
-                'espece' => '',
-                'age' => ''
-        );
-            $_SESSION['form'] = $data;
-            $name = !empty($data['name']) ? $this->view->htmlesc($data['name']) : null;
-            $espece = !empty($data['espece']) ?  $this->view->htmlesc($data['espece']) : null;
-            $verify_age = !empty($data['age']) && is_numeric($data['age']) && !($data['age'] <=0);
-
-            $age =  $verify_age ? $this->view->htmlesc($data['age']) : null;
-            if(is_null($age)){$errors['age'] = 'age is not correct';}
-
-            $all_ok = !is_null($age);
-            //var_dump($name, $espece, $age, $all_ok, $errors);
-            
-            if ($all_ok) {
-                unset($_SESSION['form']);
-                $id = $this->AnimalStorage->create(new Animal($name, $espece, $age));
-                $this->showInformation($id);
-            } else {
-                $this->view->prepareAnimalCreationPage($errors);
-                unset($_SESSION['form']);
-            }
+        $builder = new AnimalBuilder($data, $errors);
+        var_dump($builder);
+        $animal = $builder->createAnimal();
+        if (!is_null($animal)) {
+            $id = $this->animalStorage->create($animal);
+            $this->showInformation($id);
+        } else {
+            $this->view->prepareAnimalCreationPage($builder);
         }
-        else{
-            $this->view->prepareSomthingWentWrongPage();
-        }
-
 
 
     }

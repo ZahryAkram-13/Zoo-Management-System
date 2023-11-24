@@ -49,9 +49,9 @@ final class View
     {
         $this->title = 'Page sur ' . $Animal->getName();
         $this->content = $Animal->getName() .
-            " est un Animal trés fameux, il jou sur  " .
-            $Animal->getEspece() . "il a " .
-            $Animal->getAge();
+            " est un Animal trés adorable,\n il est de l'espece " .
+            $Animal->getEspece() . " et il a " .
+            $Animal->getAge() . ' ans ou peut etre jours qui sais !!';
     }
 
     function prepareUnknownAnimalPage()
@@ -87,48 +87,50 @@ final class View
         $this->title = 'Debug';
         $this->content = '<pre>' . htmlspecialchars(var_export($variable, true)) . '</pre>';
     }
-    function prepareAnimalCreationPage($errors)
+    function prepareAnimalCreationPage(AnimalBuilder $builder)
     {
+        $errors = $builder->getErrors();
+        $data = $builder->getData();
         //var_dump($errors);
-        $form_name = '';
-        $form_espece = '';
-        $form_age = '';
-        if (key_exists('form', $_SESSION)) {
-            $form = $_SESSION['form'];
-            $form_name = $form['name'];
-            $form_espece = $form['espece'];
-            $form_age = $form['age'];
-        }
-        $message = '';
-        if (!is_null($errors)) {
-            foreach ($errors as $key => $err) {
-                $message .= '<p>' . $err . '</p>';
 
-            }
-        }
+        $name = key_exists(AnimalBuilder::NAME_REF, $data) ? $data[AnimalBuilder::NAME_REF] : '';
+        $espece = key_exists(AnimalBuilder::ESPECE_REF, $data) ? $data[AnimalBuilder::ESPECE_REF] : '';
+        $age = key_exists(AnimalBuilder::AGE_REF, $data) ? $data[AnimalBuilder::AGE_REF] : '';
+
+        $name_err = key_exists(AnimalBuilder::NAME_REF, $errors) ? $errors[AnimalBuilder::NAME_REF] : '';
+        $espece_err = key_exists(AnimalBuilder::ESPECE_REF, $errors) ? $errors[AnimalBuilder::ESPECE_REF] : '';
+        $age_err = key_exists(AnimalBuilder::AGE_REF, $errors) ? $errors[AnimalBuilder::AGE_REF] : '';
+
 
 
         $this->title = 'Add Animal';
         $this->content = <<<HTML
-                <article class="message">
-                <div class="message-header">
-                <p>{$message}</p> 
-                </div>
-                </article>  
-                
-
+              
+            
                 <form class="box" action={$this->router->getAnimalSaveURL()} method="POST">
                 <label class="label" for="name">Name</label>
                 <div class="control">
-                    <input name="name" class="input" type="text" value="{$form_name}" placeholder="name" required>
+                    <input name="name" class="input" type="text" value="{$name}" placeholder="name" required>
+                    <p class="help is-danger">
+                    {$name_err}
+
+                    </p>
                 </div>
                 <label class="label" for="espece">Espece</label>
                 <div class="control">
-                    <input name="espece" class="input" type="text" value="{$form_espece}"placeholder="espece" required>
+                    <input name="espece" class="input" type="text" value="{$espece}"placeholder="espece" required>
+                    <p class="help is-danger">
+                    {$espece_err}
+
+                    </p>
                 </div>
                 <label for="age" class="label">Age</label>
                 <div class="control">
-                    <input name="age" class="input" type="number" value="{$form_age}" placeholder="age" required>
+                    <input name="age" class="input" type="number" value="{$age}" placeholder="age" required>
+                    <p class="help is-danger">
+                    {$age_err}
+
+                    </p>
                 </div>
 
                 <input class="button is-primary" type="submit" value="Submit">
