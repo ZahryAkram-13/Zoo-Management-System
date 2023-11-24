@@ -1,7 +1,7 @@
 <?php
-require_once 'model/MusicianStorage.php';
+require_once 'model/AnimalStorage.php';
 
-final class MusicianStorageStub implements MusicianStorage{
+final class AnimalStorageStub implements AnimalStorage{
     private $musicianTab;
 
     function read($id){
@@ -11,13 +11,13 @@ final class MusicianStorageStub implements MusicianStorage{
         return $this->musicianTab;
     }
 
-    function create(Musician $musician){
+    function create(Animal $musician){
         throw new Exception("create not implimented", 1);
     }
     function delete($id){
         throw new Exception("delete not implimented", 1);
     }
-    function update($id, Musician $musician){
+    function update($id, Animal $musician){
         throw new Exception("update not implimented", 1);
     }
 
@@ -25,13 +25,13 @@ final class MusicianStorageStub implements MusicianStorage{
     
     function __construct(){
         $this->musicianTab = array(
-            'vivaldi' => new Musician('vivaldi', 'violon', 66),
-            'beethoven' => new Musician('beethoven', 'piano', 10),
-            'chopin' => new Musician('chopin', 'piano', 52000),
+            'vivaldi' => new Animal('vivaldi', 'violon', 66),
+            'beethoven' => new Animal('beethoven', 'piano', 10),
+            'chopin' => new Animal('chopin', 'piano', 52000),
         );
     }
 
-    function getMusicianTab(){
+    function getAnimalTab(){
         return $this->musicianTab;
     }
 }

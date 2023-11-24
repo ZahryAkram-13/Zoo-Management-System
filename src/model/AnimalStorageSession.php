@@ -1,9 +1,9 @@
 <?php
 
 /* Inclusion des dépendances de cette classe */
-require_once 'model/Musician.php';
-require_once 'model/MusicianStorage.php';
-require_once 'model/MusicianStorageStub.php';
+require_once 'model/Animal.php';
+require_once 'model/AnimalStorage.php';
+require_once 'model/AnimalStorageStub.php';
 
 /**
  * Classe de test de l'application. Utilise un tableau
@@ -15,12 +15,12 @@ require_once 'model/MusicianStorageStub.php';
  *  - les modifications sont perdues à la fin de la session (ou si le
  *    cookie de session est supprimé).
  */
-class MusicianStorageSession implements MusicianStorage {
+class AnimalStorageSession implements AnimalStorage {
 
 	/** Le tableau d'animaux. */
 	protected $db;
 
-	private const SESSION_KEY = '__MusicianStorageSession_db';
+	private const SESSION_KEY = '__AnimalStorageSession_db';
 
 	/**
 	 * Construit une nouvelle instance.
@@ -30,12 +30,12 @@ class MusicianStorageSession implements MusicianStorage {
 	public function __construct() {
 		/* Il faut avoir mis le session_start() avant de créer une instance. */
 		if (session_status() !== PHP_SESSION_ACTIVE) {
-			throw new Exception('Creating an instance of MusicianStorageSession requires an active session.');
+			throw new Exception('Creating an instance of AnimalStorageSession requires an active session.');
 		}
 		if (key_exists(self::SESSION_KEY, $_SESSION)) {
 			$this->db = $_SESSION[self::SESSION_KEY];
 		} else {
-			$this->db = (new MusicianStorageStub())->readAll();
+			$this->db = (new AnimalStorageStub())->readAll();
 		}
 	}
 
@@ -85,14 +85,14 @@ class MusicianStorageSession implements MusicianStorage {
 	}
 
 	/** Implémentation de la méthode de AnimalStorage */
-	public function create(Musician $a) {
+	public function create(Animal $a) {
 		$id = self::generate_id($this->db);
 		$this->db[$id] = $a;
 		return $id;
 	}
 
 	/** Implémentation de la méthode de AnimalStorage */
-	public function update($id, Musician $a) {
+	public function update($id, Animal $a) {
 		if (array_key_exists($id, $this->db)) {
             $this->db[$id] = $a;
 			return true;

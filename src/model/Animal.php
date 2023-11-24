@@ -1,18 +1,18 @@
 <?php
 
 
-final class Musician{
+final class Animal{
     private $name;
-    private $instrument;
+    private $espece;
     private $age;
 
     function getName(){return $this->name;}
-    function getInstrument(){return $this->instrument;}
+    function getEspece(){return $this->espece;}
     function getAge(){return $this->age;}
 
-    function __construct($name, $instrument, $age){
+    function __construct($name, $espece, $age){
         $this->name = $name;
-        $this->instrument = $instrument;
+        $this->espece = $espece;
         $this->age = $age;
     }
 }

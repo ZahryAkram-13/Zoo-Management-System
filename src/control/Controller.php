@@ -1,66 +1,68 @@
 <?php
 
 require_once 'view/View.php';
-require_once 'model/Musician.php';
+require_once 'model/Animal.php';
+require_once 'model/AnimalBuilder.php';
 
 final class Controller
 {
     public $view;
-    public $musicianStorage;
+    public $animalStorage;
 
-    function __construct(View $view, MusicianStorage $musicianStorage)
+    function __construct(View $view, AnimalStorage $animalStorage)
     {
         $this->view = $view;
-        $this->musicianStorage = $musicianStorage;
+        $this->animalStorage = $animalStorage;
 
     }
 
     public function showInformation($id)
     {
-        $musicien = $this->musicianStorage->read($id);
-        if ($musicien != null) {
-            $this->view->prepareMusicianPage($musicien);
+        $animal = $this->animalStorage->read($id);
+        if ($animal != null) {
+            $this->view->prepareAnimalPage($animal);
         } else {
-            $this->view->prepareUnknownMusicianPage();
+            $this->view->prepareUnknownAnimalPage();
         }
     }
 
     public function showList()
     {
-        $this->view->prepareListPage($this->musicianStorage->readAll());
+        $this->view->prepareListPage($this->animalStorage->readAll());
     }
 
-    public function newMusician($errors)
+    public function newAnimal($errors)
     {
-        $this->view->prepareMusicainCreationPage($errors);
+        $this->view->prepareAnimalCreationPage($errors);
     }
 
-    public function saveNewMusician(array $data)
+    public function saveNewAnimal(array $data)
     {
-        var_dump($data);
+        var_dump($data, $_SESSION);
         if (!empty($data)) {
             $errors = array(
                 'name' => '',
-                'instrument' => '',
+                'espece' => '',
                 'age' => ''
         );
             $_SESSION['form'] = $data;
             $name = !empty($data['name']) ? $this->view->htmlesc($data['name']) : null;
-            $instrument = !empty($data['instrument']) ?  $this->view->htmlesc($data['instrument']) : null;
+            $espece = !empty($data['espece']) ?  $this->view->htmlesc($data['espece']) : null;
             $verify_age = !empty($data['age']) && is_numeric($data['age']) && !($data['age'] <=0);
 
             $age =  $verify_age ? $this->view->htmlesc($data['age']) : null;
             if(is_null($age)){$errors['age'] = 'age is not correct';}
 
             $all_ok = !is_null($age);
-            var_dump($name, $instrument, $age, $all_ok, $errors);
+            //var_dump($name, $espece, $age, $all_ok, $errors);
             
             if ($all_ok) {
                 unset($_SESSION['form']);
-                $id = $this->musicianStorage->create(new Musician($name, $instrument, $age));
+                $id = $this->AnimalStorage->create(new Animal($name, $espece, $age));
                 $this->showInformation($id);
             } else {
-                $this->view->prepareMusicainCreationPage($errors);
+                $this->view->prepareAnimalCreationPage($errors);
+                unset($_SESSION['form']);
             }
         }
         else{

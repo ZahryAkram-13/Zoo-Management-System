@@ -14,8 +14,8 @@ final class View
         $this->router = $router;
         $this->menu = array(
             'Home' => $this->router->getHomeURL(),
-            'Musicians' => $this->router->getMusiciansURL(),
-            'newMusician' => $this->router->getMusicianCreationURL(),
+            'Animals' => $this->router->getAnimalsURL(),
+            'newAnimal' => $this->router->getAnimalCreationURL(),
         );
     }
 
@@ -45,19 +45,19 @@ final class View
         $this->title = 'kurru';
     }
 
-    function prepareMusicianPage(Musician $musician)
+    function prepareAnimalPage(Animal $Animal)
     {
-        $this->title = 'Page sur ' . $musician->getName();
-        $this->content = $musician->getName() .
-            " est un musician trés fameux, il jou sur  " .
-            $musician->getInstrument() . "il a " .
-            $musician->getAge();
+        $this->title = 'Page sur ' . $Animal->getName();
+        $this->content = $Animal->getName() .
+            " est un Animal trés fameux, il jou sur  " .
+            $Animal->getEspece() . "il a " .
+            $Animal->getAge();
     }
 
-    function prepareUnknownMusicianPage()
+    function prepareUnknownAnimalPage()
     {
         $this->title = '404';
-        $this->content = 'Musician Inconnu';
+        $this->content = 'Animal Inconnu';
     }
 
     function preparePageAcueil()
@@ -66,16 +66,16 @@ final class View
         $this->content = '';
     }
 
-    function prepareListPage($musicians)
+    function prepareListPage($Animals)
     {
-        $this->title = 'all Musicians';
+        $this->title = 'all Animals';
         $this->content = '';
-        foreach ($musicians as $key => $musician) {
-            $dist = $this->router->getMusicianURL($key);
+        foreach ($Animals as $key => $Animal) {
+            $dist = $this->router->getAnimalURL($key);
             $this->content .= '<a href="' .
                 $dist .
                 '" target="_blank" rel="noopener noreferrer"> ' .
-                $musician->getName() . '</a><br>';
+                $Animal->getName() . '</a><br>';
 
         }
         $this->content;
@@ -87,16 +87,16 @@ final class View
         $this->title = 'Debug';
         $this->content = '<pre>' . htmlspecialchars(var_export($variable, true)) . '</pre>';
     }
-    function prepareMusicainCreationPage($errors)
+    function prepareAnimalCreationPage($errors)
     {
-        var_dump($errors);
+        //var_dump($errors);
         $form_name = '';
-        $form_instrument = '';
+        $form_espece = '';
         $form_age = '';
         if (key_exists('form', $_SESSION)) {
             $form = $_SESSION['form'];
             $form_name = $form['name'];
-            $form_instrument = $form['instrument'];
+            $form_espece = $form['espece'];
             $form_age = $form['age'];
         }
         $message = '';
@@ -108,7 +108,7 @@ final class View
         }
 
 
-        $this->title = 'Add Musician';
+        $this->title = 'Add Animal';
         $this->content = <<<HTML
                 <article class="message">
                 <div class="message-header">
@@ -117,14 +117,14 @@ final class View
                 </article>  
                 
 
-                <form class="box" action={$this->router->getMusicianSaveURL()} method="POST">
+                <form class="box" action={$this->router->getAnimalSaveURL()} method="POST">
                 <label class="label" for="name">Name</label>
                 <div class="control">
                     <input name="name" class="input" type="text" value="{$form_name}" placeholder="name" required>
                 </div>
-                <label class="label" for="instrument">Instrument</label>
+                <label class="label" for="espece">Espece</label>
                 <div class="control">
-                    <input name="instrument" class="input" type="text" value="{$form_instrument}"placeholder="instrument" required>
+                    <input name="espece" class="input" type="text" value="{$form_espece}"placeholder="espece" required>
                 </div>
                 <label for="age" class="label">Age</label>
                 <div class="control">

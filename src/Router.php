@@ -1,18 +1,18 @@
 <?php
 require_once 'view/View.php';
 require_once 'control/Controller.php';
-require_once 'model/MusicianStorageStub.php';
+require_once 'model/AnimalStorageStub.php';
 final class Router
 {
 
-    function getMusicianURL($id)
+    function getAnimalURL($id)
     {
         return '?id=' . $id;
     }
 
-    function getMusiciansURL()
+    function getAnimalsURL()
     {
-        return '?musicians';
+        return '?animals';
     }
 
     function getHomeURL()
@@ -20,22 +20,22 @@ final class Router
         return "";
     }
 
-    function getMusicianCreationURL()
+    function getAnimalCreationURL()
     {
-        return "?action=newMusician";
+        return "?action=newAnimal";
     }
-    function getMusicianSaveURL()
+    function getAnimalSaveURL()
     {
-        return "?action=saveMusician";
+        return "?action=saveAnimal";
     }
 
 
 
 
-    function main(MusicianStorage $musicianStorage)
+    function main(AnimalStorage $animalStorage)
     {
         $view = new View($this, '', '');
-        $controller = new Controller($view, $musicianStorage);
+        $controller = new Controller($view, $animalStorage);
 
         $pathInfo = isset($_SERVER['PATH_INFO']) ? trim($_SERVER['PATH_INFO'], '/') : '';
         //var_dump($pathInfo);
@@ -48,7 +48,7 @@ final class Router
                 $id = htmlspecialchars($_GET['id']);
                 $controller->showInformation($id);
 
-            } else if (key_exists('musicians', $_GET)) {
+            } else if (key_exists('animals', $_GET)) {
                 $controller->showList();
 
             } else if (empty($pathInfo)) {
@@ -64,15 +64,15 @@ final class Router
                 $action = $_GET['action'];
                 //echo $action;
                 switch ($action) {
-                    case 'newMusician':
-                        $controller->view->prepareMusicainCreationPage(null);
+                    case 'newAnimal':
+                        $controller->view->prepareAnimalCreationPage(null);
                         break;
-                    case 'saveMusician':
-                        $controller->saveNewMusician($_POST);
+                    case 'saveAnimal':
+                        $controller->saveNewAnimal($_POST);
                         break;
 
                     default:
-                        $controller->view->prepareDebugPage($_GET);
+                        $controller->view->prepareDebugPage($_POST);
                         break;
                 }
 
