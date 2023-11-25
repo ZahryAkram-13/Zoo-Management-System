@@ -25,7 +25,9 @@ session_start();
 $animalStorageSession = new AnimalStorageSession();
 $router = new Router();
 $router->main($animalStorageSession);
-
-
+echo "post";
+var_dump($_POST);
+echo "get";
+var_dump($_GET);
 var_dump($_SESSION);
 ?>

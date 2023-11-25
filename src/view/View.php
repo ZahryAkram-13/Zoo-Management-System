@@ -48,16 +48,32 @@ final class View
         $this->title = 'kurru';
     }
 
-    function prepareAnimalPage(Animal $Animal)
+    function getAnimalPageTemplate(Animal $animal, $id)
     {
-        $this->title = 'Page sur ' . $Animal->getName();
-        $this->content = $Animal->getName() .
-            " est un Animal trés adorable,\n c'est un " .
-            $Animal->getEspece() . " et il a " .
-            $Animal->getAge() . ' ans !!' . '<br>' . 
-            "ces poils sont blancs tachés de noirs."  . '<br>' . 
-            "Il a une jolie moustache qui lui cache la moitié de son visage à l'extrémité de ses pattes fines" . '<br>' . 
-            "il a des griffes pointues il les utilise pour se défendre, il est gentil et mignon il n'aime que jouer" . '<br>';
+        $template = <<<HTML
+                        <div class="block">
+                        <p class="subtitle is-5">
+                            est un animal trés adorable ,c'est un <strong>{$animal->getEspece()}</strong> 
+                            et il a <strong>{$animal->getAge()}</strong> ans.  <br> 
+                            ces poils sont blancs tachés de noirs. Il a une jolie moustache qui lui cache la moitié de son visage à 
+                            l'extrémité de ses pattes fines. <br>
+                            il a des griffes pointues il les utilise pour se défendre, il est gentil et mignon il n'aime que jouer.
+                        </p>
+                
+                        {$this->getUpdateDeleteTemplate($id)}  
+                        </div>
+        
+        HTML;
+        return $template;
+    }
+
+    function prepareAnimalPage(Animal $animal)
+    {
+        $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : '';
+
+        $this->title = View::htmlesc($animal->getName());
+        $this->content = $this->getAnimalPageTemplate($animal, $id);
+
     }
 
     function prepareUnknownAnimalPage()
@@ -72,16 +88,70 @@ final class View
         $this->content = '';
     }
 
-    function prepareListPage($Animals)
+    function getMenuTemplate()
+    {
+        $menu = '<div id="navbarBasicExample" class="navbar-menu">
+                  <div class="navbar-start">';
+        foreach ($this->menu as $key => $url) {
+            $menu .= <<<HTML
+                        <a class="navbar-item" href="{$url}">{$key}</a>
+                    HTML;
+        }
+        $menu .= '</div></div>';
+
+        return $menu;
+    }
+
+    function getFeedbakMessage()
+    {
+        if (!is_null($_SESSION) && key_exists('feedback', $_SESSION)) {
+            $feedback = $_SESSION['feedback'];
+            $flag = key_exists('flag', $feedback) ? $feedback['flag'] : null;
+            $message = key_exists('message', $feedback) ? $feedback['message'] : null;
+            $template = <<<HTML
+                        <article class="notification is-primary {$flag}">
+                                <p>{$message}</p>
+                        </article>
+                        HTML;
+        }
+
+        return key_exists('feedback', $_SESSION) && !is_null($_SESSION) ? $template : '';
+    }
+
+    function getUpdateDeleteTemplate($id)
+    {
+        $updateURL = $this->router->getAnimalUpdateURL($id);
+        $deleteURL = $this->router->getAnimalDeleteURL($id);
+        $template = <<<HTML
+                         <div class="buttons">
+                            <form class="" action={$updateURL} method="post">
+                            <input type="hidden" name="id" value="{$id}">
+                            <button class="button is-warning m-1">Update</button>
+                            </form>
+                            <form class="" action={$deleteURL} method="post">
+                            <input type="hidden" name="id" value="{$id}">
+                            <button class="button is-danger m-1">Delete</button>
+                            </form>
+                        </div>    
+
+                HTML;
+        return $template;
+    }
+
+
+    function prepareListPage($animals)
     {
         $this->title = 'all Animals';
         $this->content = '';
-        foreach ($Animals as $key => $Animal) {
+        foreach ($animals as $key => $animal) {
             $dist = $this->router->getAnimalURL($key);
-            $this->content .= '<a href="' .
-                $dist .
-                '" target="_blank" rel="noopener noreferrer"> ' .
-                $Animal->getName() . '</a><br>';
+            $name = View::htmlesc($animal->getName());
+            $this->content .= <<<HTML
+                    <div class="box">
+                        <a class="is-size-2" href="{$dist}">{$name}</a> 
+                        {$this->getUpdateDeleteTemplate($key)}        
+                    </div>
+             HTML;
 
         }
         $this->content;
@@ -93,11 +163,9 @@ final class View
     //     $this->title = 'Debug';
     //     $this->content = '<pre>' . htmlspecialchars(var_export($variable, true)) . '</pre>';
     // }
-    function prepareAnimalCreationPage(AnimalBuilder $builder)
+
+    public function getFormTemplate($data, $errors, $url)
     {
-        $errors = $builder->getErrors();
-        $data = $builder->getData();
-        //var_dump($errors);
 
         $name = key_exists(AnimalBuilder::NAME_REF, $data) ? $data[AnimalBuilder::NAME_REF] : '';
         $espece = key_exists(AnimalBuilder::ESPECE_REF, $data) ? $data[AnimalBuilder::ESPECE_REF] : '';
@@ -107,11 +175,8 @@ final class View
         $espece_err = key_exists(AnimalBuilder::ESPECE_REF, $errors) ? $errors[AnimalBuilder::ESPECE_REF] : '';
         $age_err = key_exists(AnimalBuilder::AGE_REF, $errors) ? $errors[AnimalBuilder::AGE_REF] : '';
 
-
-
-        $this->title = 'Add Animal';
-        $this->content = <<<HTML
-                <form class="box" action={$this->router->getAnimalSaveURL()} method="POST">
+        $form = <<<HTML
+                <form class="box" action={$url} method="POST">
                 <label class="label" for="name">Name</label>
                 <div class="control">
                     <input name="name" class="input" type="text" value="{$name}" placeholder="name" required>
@@ -138,65 +203,112 @@ final class View
 
                 <input class="button is-primary" type="submit" value="Submit">
                 </form>
-                       
+         HTML;
+
+        return $form;
+
+
+    }
+
+    function getDeleteForm($url)
+    {
+        $template = <<<HTML
+                    <form class="box" method='post' action='{$url}'>
+                    <p class="subtitle is-4">
+                        you gonna delete it for ever. <br>
+                        are you sure you want to proceed this ? 
+                    </p>
+                    <input class="button is-danger" type="submit" value="Delete">
+                    </form>
+        HTML;
+        return $template;
+    }
+
+    public function prepareAnimalDeletePage(Animal $animal, $id)
+    {
+        $url = $this->router->getDeleteConfirmURL($id);
+        $name = View::htmlesc($animal->getName());
+        $this->title = 'Delete Animal';
+        $this->content = <<<HTML
+                        <p class="subtitle is-4">
+                        <strong> delete animal : {$name}</strong> 
+                        </p>
+                        {$this->getDeleteForm($url)}
         HTML;
 
     }
 
-    public function prepareSomthingWentWrongPage()
+    public function prepareAnimalUpdatePage(AnimalBuilder $builder, $id)
     {
-        $this->title = 'Something Went Wrong';
+        $errors = $builder->getErrors();
+        $data = $builder->getData();
+
+        $updatedURL = $this->router->getUpdatedURL($id);
+        $this->title = 'Update Animal';
+        $this->content = $this->getFormTemplate($data, $errors, $updatedURL);
+
+    }
+
+    function prepareAnimalCreationPage(AnimalBuilder $builder)
+    {
+        $errors = $builder->getErrors();
+        $data = $builder->getData();
+
+        $saveAnimalURL = $this->router->getAnimalSaveURL();
+        $this->title = 'Add Animal';
+        $this->content = $this->getFormTemplate($data, $errors, $saveAnimalURL);
+
+    }
+
+    public function prepareSomethingWentWrongPage()
+    {
+        $this->title = 'Ooops Something Went Wrong';
         $this->content = 'Please try later';
     }
 
-    function displayAnimalCreationSuccess($id){
+    public function couldNotDeletePage()
+    {
+        $this->title = 'Ooops we could not delete';
+        $this->content = 'Please try later';
+    }
+
+    function displayAnimalCreationSuccess($id)
+    {
+        $flag = 'is-success';
         $url = $this->router->getAnimalURL($id);
-        $feedback = 'Animal is created successfully';
-        $this->router->POSTredirect($url, $feedback);
-        
+        $message = 'Animal is created successfully';
+        $this->router->POSTredirect($url, $message, $flag);
+
+    }
+    function displayAnimalUpdatedSuccess($id)
+    {
+        $flag = 'is-warning';
+        $url = $this->router->getAnimalURL($id);
+        $message = 'Animal is Updated successfully';
+        $this->router->POSTredirect($url, $message, $flag);
+
+    }
+    function displayAnimalDeletedSuccess()
+    {
+        $flag = 'is-danger';
+        $url = $this->router->getAnimalsURL();
+        $message = 'Animal is deleted successfully';
+        $this->router->POSTredirect($url, $message, $flag);
+
     }
 
     function render()
     {
-        
-        if(is_null($this->title) || is_null($this->content)){
-            $this->prepareSomthingWentWrongPage();
+
+        if (is_null($this->title) || is_null($this->content)) {
+            $this->prepareSomethingWentWrongPage();
+        } else {
+            //include 'template.html';
+            include 'templateBulma.html';
+
         }
-        else{
-               include 'templateBulma.html';
-          
-        }
-    //     echo '<!DOCTYPE html>
-    //     <html lang="en">
-    //    <head>
-    //        <meta charset="UTF-8">
-    //        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    //        <title>' . $this->title . '</title>
-    //    </head>
-    //    <body>' .
-    //        '<h1>' . $this->title . '</h1>
-    //        <p>' . $this->content . '</p>
-
-    //    </body>
-    //    </html>';
-
-    //     echo '<div>
-    //     <ul>' . 
-    //     <?php
-    
-    //         foreach($this->menu as $key => $url){
-    //             echo <<<HTML
-    //                 <li class="">
-    //                     <a class="" href={$url}>{$key}</a>
-    //                 </li>
-    //                 HTML;
-    //      
-
-        
 
 
-        
-        //include 'template.html';
 
     }
 }

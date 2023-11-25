@@ -17,7 +17,7 @@ final class Router
 
     function getHomeURL()
     {
-        return "";
+        return "/mvcr/site.php";
     }
 
     function getAnimalCreationURL()
@@ -29,11 +29,37 @@ final class Router
         return "?action=saveAnimal";
     }
 
-    function POSTredirect($url, $feedback){
-        $_SESSION['feedback'] = $feedback;
+    function getAnimalUpdateURL($id)
+    {
+        return "?action=updateAnimal&id=" . $id;
+    }
+    function getUpdatedURL($id)
+    {
+        return "?action=updated&id=" . $id;
+    }
+
+    function getAnimalDeleteURL($id)
+    {
+        return "?action=deleteAnimal&id=" . $id;
+    }
+
+    function getDeleteConfirmURL($id)
+    {
+        return "?action=deleteConfirmed&id=" . $id;
+    }
+
+
+
+
+
+    function POSTredirect($url, $message, $flag)
+    {
+        ob_start();
+        $_SESSION['feedback']['message'] = $message;
+        $_SESSION['feedback']['flag'] = $flag;
         header("HTTP/1.1 303 See Other");
         header("Location:$url");
-
+        ob_end_flush();
         exit();
     }
 
@@ -50,7 +76,7 @@ final class Router
         try {
 
             if (key_exists('id', $_GET)) {
-                $id = htmlspecialchars($_GET['id']);
+                $id = View::htmlesc($_GET['id']);
                 $controller->showInformation($id);
 
             } else if (key_exists('animals', $_GET)) {
@@ -65,17 +91,41 @@ final class Router
             }
 
             if (key_exists("action", $_GET)) {
-                $action = $_GET['action'];
+                $action = View::htmlesc($_GET['action']);
+                //var_dump($_POST);
                 switch ($action) {
                     case 'newAnimal':
                         $controller->newAnimal(new AnimalBuilder($_POST, array()));
+                        break;
+                    case 'updated':
+                        if (key_exists('id', $_GET)) {
+                            $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : -13;
+                            $controller->saveUpdate($_POST, $id);
+                        }
+                        break;
+                    case 'updateAnimal':
+                        if (key_exists("id", $_POST) || key_exists('id', $_GET)) {
+                            //$id = htmlspecialchars($_POST['id']);
+                            $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : -13;
+                            $controller->updateAnimal($id);
+                        }
                         break;
                     case 'saveAnimal':
                         $controller->saveNewAnimal($_POST, array());
                         break;
 
+                    case 'deleteAnimal':
+                        $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : -13;
+                        $controller->deleteAnimal($id);
+                        break;
+
+                    case 'deleteConfirmed':
+                        $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : -13;
+                        $controller->deleteConfirmed($id);
+                        break;
+
                     default:
-                        $controller->view->prepareSomthingWentWrongPage();
+                        $controller->view->prepareSomethingWentWrongPage();
                         break;
                 }
 

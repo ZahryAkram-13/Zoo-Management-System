@@ -21,8 +21,7 @@ final class AnimalBuilder{
         $this->errors = $errors;
     }
 
-    public function createAnimal(){
-        $data = $this->data;
+    function isValid($data){
         if(!empty($data)){
             $this->errors = array(
                 AnimalBuilder::NAME_REF => null,
@@ -32,7 +31,7 @@ final class AnimalBuilder{
             $name = $data[AnimalBuilder::NAME_REF];
             if(!$this->isValidName($name)){
                 $this->errors[AnimalBuilder::NAME_REF] = 'Invalid name, should be alphanumeric';
-                return null;
+                return false;
             }
             $espece = $data[AnimalBuilder::ESPECE_REF];
             if(!$this->isValidEspece($espece)){
@@ -42,11 +41,27 @@ final class AnimalBuilder{
             $age = $data[AnimalBuilder::AGE_REF];
             if(!$this->isValidAge($age)){
                 $this->errors[AnimalBuilder::AGE_REF] = 'Invalid age, it meant to be reel age';
-                return null;
+                return false;
             }
-            $this->animal = new Animal($name, $espece, $age);
-            //$this->errors = null;
+           
+            return true;
+        }
+        return false;
 
+    }
+
+    public function updateAnimal(){
+        return $this->createAnimal();
+    }
+
+    public function createAnimal(){
+        $data = $this->data;
+        $name = $data[AnimalBuilder::NAME_REF];
+        $espece = $data[AnimalBuilder::ESPECE_REF];
+        $age = $data[AnimalBuilder::AGE_REF];
+
+        if($this->isValid($data)){
+            $this->animal = new Animal($name, $espece, $age);
             return $this->animal;
         }
         return null;

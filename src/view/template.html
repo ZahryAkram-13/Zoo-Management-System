@@ -1,6 +1,10 @@
+
+
 <body>
-    <div>
+  <?= $this->getFeedbakMessage();?>
+    <!-- <div>
       <ul>
+        
         <?php
         foreach($this->menu as $key => $url){
             echo <<<HTML
@@ -11,7 +15,9 @@
          } 
     ?>
       </ul>
-    </div>
+    </div> -->
+    
+    <?php echo $this->getMenuTemplate(); ?>
 
     <div class="box">
       <h1 class="title"><?= $this->title ?></h1>
