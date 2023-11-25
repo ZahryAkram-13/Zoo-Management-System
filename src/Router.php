@@ -51,7 +51,13 @@ final class Router
 
 
 
-
+    /**
+     * une fonction qui redirige vers un url donne avec un message feedback et un flag
+     * pour preciser la nature du message. 
+     * @param string $message 
+     * @param string $url 
+     * @param string $url 
+     */
     function POSTredirect($url, $message, $flag)
     {
         ob_start();

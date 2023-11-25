@@ -47,7 +47,13 @@ final class View
         $this->content = 'kurru';
         $this->title = 'kurru';
     }
-
+    /**
+     * une fonction qui retourne une maquette html representant une page contenant les informations d'un animal
+     *
+     * @param Animal $animal une instance d'un animal
+     * @param integer $id  id de l'animal
+     * 
+     */
     function getAnimalPageTemplate(Animal $animal, $id)
     {
         $template = <<<HTML
@@ -67,6 +73,12 @@ final class View
         return $template;
     }
 
+    /**
+     * une fonction qui prepare l'affichage des infos d'un animal.
+     *
+     * @param Animal $animal une instance d'un animal
+     * 
+     */
     function prepareAnimalPage(Animal $animal)
     {
         $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : '';
@@ -75,19 +87,29 @@ final class View
         $this->content = $this->getAnimalPageTemplate($animal, $id);
 
     }
-
+    /**
+     * une fonction qui prepare l'affichage d'un animal inconnu.
+     *
+     */
     function prepareUnknownAnimalPage()
     {
         $this->title = '404';
         $this->content = 'Animal Inconnu';
     }
 
+    /**
+     * une fonction qui prepare l'affichage d'accueil.
+     *
+     */
     function preparePageAcueil()
     {
         $this->title = 'Accueil';
         $this->content = '';
     }
 
+    /**
+     * une fonction qui retourne une maquette html representant un menu.
+     */
     function getMenuTemplate()
     {
         $menu = '<div id="navbarBasicExample" class="navbar-menu">
@@ -101,7 +123,9 @@ final class View
 
         return $menu;
     }
-
+    /**
+     * une fonction qui retourne une maquette html representant un message de feedback.
+     */
     function getFeedbakMessage()
     {
         if (!is_null($_SESSION) && key_exists('feedback', $_SESSION)) {
@@ -117,7 +141,11 @@ final class View
 
         return key_exists('feedback', $_SESSION) && !is_null($_SESSION) ? $template : '';
     }
-
+    /**
+     * une fonction qui retourne une maquette html representant 2 button (update and delete)
+     * selon id de l'animal.
+     * @param integer $id
+     */
     function getUpdateDeleteTemplate($id)
     {
         $updateURL = $this->router->getAnimalUpdateURL($id);
@@ -138,7 +166,10 @@ final class View
         return $template;
     }
 
-
+    /**
+     * une fonction qui retourne une maquette html representant une liste des animaux 
+     * @param array $animals une liste des animaux
+     */
     function prepareListPage($animals)
     {
         $this->title = 'all Animals';
@@ -164,6 +195,12 @@ final class View
     //     $this->content = '<pre>' . htmlspecialchars(var_export($variable, true)) . '</pre>';
     // }
 
+    /**
+     * une fonction qui retourne une maquette html representant un formulaire soit remplis par des info soit vide
+     * @param array $data les champs du formulaire
+     * @param array $errors les erreurs qui puissent se produire
+     * @param string $url action du formulaire
+     */
     public function getFormTemplate($data, $errors, $url)
     {
 
@@ -209,7 +246,10 @@ final class View
 
 
     }
-
+    /**
+     * une fonction qui retourne une maquette html representant un formulaire pour la supression d'un animal.
+     * @param string $url action du formulaire
+     */
     function getDeleteForm($url)
     {
         $template = <<<HTML
@@ -223,7 +263,11 @@ final class View
         HTML;
         return $template;
     }
-
+    /**
+     * une fonction qui prepare la page de la supression d'un animal
+     * @param Animal $animal 
+     * @param string $id id d'animal
+     */
     public function prepareAnimalDeletePage(Animal $animal, $id)
     {
         $url = $this->router->getDeleteConfirmURL($id);
@@ -237,7 +281,11 @@ final class View
         HTML;
 
     }
-
+    /**
+     * une fonction qui prepare la page de la modification d'un animal
+     * @param AnimalBuilder $builder 
+     * @param string $id id d'animal
+     */
     public function prepareAnimalUpdatePage(AnimalBuilder $builder, $id)
     {
         $errors = $builder->getErrors();
@@ -248,7 +296,10 @@ final class View
         $this->content = $this->getFormTemplate($data, $errors, $updatedURL);
 
     }
-
+    /**
+     * une fonction qui prepare la page de la creation d'un animal
+     * @param AnimalBuilder $builder 
+     */
     function prepareAnimalCreationPage(AnimalBuilder $builder)
     {
         $errors = $builder->getErrors();
@@ -272,6 +323,10 @@ final class View
         $this->content = 'Please try later';
     }
 
+    /**
+     * une fonction qui prepare un feedback creation et redirige vers la page d'animal
+     * @param string $id id d'animal
+     */
     function displayAnimalCreationSuccess($id)
     {
         $flag = 'is-success';
@@ -280,6 +335,10 @@ final class View
         $this->router->POSTredirect($url, $message, $flag);
 
     }
+     /**
+     * une fonction qui prepare un feedback modification et redirige vers la page d'animal
+     * @param string $id id d'animal
+     */
     function displayAnimalUpdatedSuccess($id)
     {
         $flag = 'is-warning';
@@ -288,6 +347,9 @@ final class View
         $this->router->POSTredirect($url, $message, $flag);
 
     }
+     /**
+     * une fonction qui prepare un feedback supression et redirige vers la page d'animaux
+     */
     function displayAnimalDeletedSuccess()
     {
         $flag = 'is-danger';
@@ -297,6 +359,9 @@ final class View
 
     }
 
+ /**
+     * une fonction qui renvoie l'html 'templateBulma.html' apres avoir terminer la logic  
+     */
     function render()
     {
 

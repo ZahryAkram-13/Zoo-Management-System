@@ -17,6 +17,10 @@ final class Controller
 
     }
 
+    /**
+     * une fonction qui affiche les infos dun animal
+     * @param string $id 
+     */
     public function showInformation($id)
     {
         $animal = $this->animalStorage->read($id);
@@ -26,18 +30,28 @@ final class Controller
             $this->view->prepareUnknownAnimalPage();
         }
     }
-
+    /**
+     * une fonction qui affiche les animaux.
+     */
     public function showList()
     {
         $this->view->prepareListPage($this->animalStorage->readAll());
     }
 
+    /**
+     * une fonction qui renvoie un formulaire pour creation dun animal.
+     * @param AnimalBuilder $builder
+     */
     public function newAnimal(AnimalBuilder $builder)
     {
         $this->view->prepareAnimalCreationPage($builder);
     }
 
-
+    /**
+     * une fonction qui va sauvgarder un animal cree si les infos sont valides
+     * @param array $data,les champs du form
+     * @param array $errors les erreurs
+     */
     public function saveNewAnimal(array $data, array $errors)
     {
         $builder = new AnimalBuilder($data, $errors);
@@ -51,7 +65,10 @@ final class Controller
 
 
     }
-
+    /**
+     * une fonction qui renvoie un formulaire pour modification dun animal.
+     * @param string $id
+     */
     public function updateAnimal($id)
     {
         $animal = $this->animalStorage->read($id);
@@ -63,13 +80,16 @@ final class Controller
 
             $builder = new AnimalBuilder($data, array());
             $this->view->prepareAnimalUpdatePage($builder, $id);
-        }
-        else{
+        } else {
             $this->view->prepareUnknownAnimalPage();
         }
 
     }
-
+    /**
+     * une fonction qui va sauvgarder un animal modifie si les infos sont valides
+     * @param array $data,les champs du form
+     * @param string $id 
+     */
     public function saveUpdate($data, $id)
     {
         $builder = new AnimalBuilder($data, array());
@@ -83,19 +103,25 @@ final class Controller
         }
         $this->saveNewAnimal($data, array());
     }
-
+    /**
+     * une fonction qui renvoie un formulaire pour supression dun animal (un button).
+     * @param string $id les erreurs
+     */
     public function deleteAnimal($id)
     {
         $animal = $this->animalStorage->read($id);
         if (!is_null($animal)) {
             $this->view->prepareAnimalDeletePage($animal, $id);
-        }
-        else {
+        } else {
             $this->view->prepareUnknownAnimalPage();
         }
-        
-    }
 
+    }
+    /**
+     * une fonction qui va suprimer un animal et renvoie un feedback du supression
+     * et redirige vers la page des animaux. 
+     * @param string $id 
+     */
     public function deleteConfirmed($id)
     {
         $deleted = $this->animalStorage->delete($id);
