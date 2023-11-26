@@ -105,7 +105,7 @@ final class View
     function preparePageAcueil()
     {
         $this->title = 'Accueil';
-        $this->content = '';
+        $this->content = "welcome to the zooo, you' ll find here all kind of animals";
     }
 
     /**
@@ -168,6 +168,14 @@ final class View
         return $template;
     }
 
+    function getScriptTemplate()
+    {
+        $script = <<<HTML
+       
+        HTML;
+        return $script;
+    }
+
     /**
      * une fonction qui retourne une maquette html representant une liste des animaux 
      * @param array $animals une liste des animaux
@@ -176,14 +184,22 @@ final class View
     {
         $this->title = 'all Animals';
         $this->content = '';
+
         foreach ($animals as $key => $animal) {
             $dist = $this->router->getAnimalURL($key);
+            $jsKey = json_encode($key);
             $name = View::htmlesc($animal->getName());
             $this->content .= <<<HTML
-                    <div class="box">
-                        <a class="is-size-2" href="{$dist}">{$name}</a> 
-                        {$this->getUpdateDeleteTemplate($key)}        
-                    </div>
+                            <div class="box">
+                                <a class="is-size-2" href="{$dist}">{$name}</a> 
+                                <p>
+                                <button id="getDetails"  onclick='getDetails({$jsKey}, this)' class="button is-text">details</button>
+                                <div class="notification is-link" id={$jsKey} style="display: none;">
+                                </div>
+                               
+                                </p>
+                                {$this->getUpdateDeleteTemplate($key)}        
+                            </div>
              HTML;
 
         }
@@ -337,7 +353,7 @@ final class View
         $this->router->POSTredirect($url, $message, $flag);
 
     }
-     /**
+    /**
      * une fonction qui prepare un feedback modification et redirige vers la page d'animal
      * @param string $id id d'animal
      */
@@ -349,7 +365,7 @@ final class View
         $this->router->POSTredirect($url, $message, $flag);
 
     }
-     /**
+    /**
      * une fonction qui prepare un feedback supression et redirige vers la page d'animaux
      */
     function displayAnimalDeletedSuccess()
@@ -361,7 +377,7 @@ final class View
 
     }
 
- /**
+    /**
      * une fonction qui renvoie l'html 'templateBulma.html' apres avoir terminer la logic  
      */
     function render()
