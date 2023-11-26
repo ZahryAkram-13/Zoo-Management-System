@@ -17,6 +17,7 @@ final class View
             'Home' => $this->router->getHomeURL(),
             'Animals' => $this->router->getAnimalsURL(),
             'newAnimal' => $this->router->getAnimalCreationURL(),
+            //'JSON' => $this->router->getJsonURL(),
         );
 
         $this->feedback = $feedback;
@@ -51,7 +52,7 @@ final class View
      * une fonction qui retourne une maquette html representant une page contenant les informations d'un animal
      *
      * @param Animal $animal une instance d'un animal
-     * @param integer $id  id de l'animal
+     * @param string $id  id de l'animal
      * 
      */
     function getAnimalPageTemplate(Animal $animal, $id)
@@ -144,10 +145,11 @@ final class View
     /**
      * une fonction qui retourne une maquette html representant 2 button (update and delete)
      * selon id de l'animal.
-     * @param integer $id
+     * @param string $id
      */
     function getUpdateDeleteTemplate($id)
     {
+        $id = View::htmlesc($id); // deja fait dans le routeur mais cest tjr mieux d'etre mefiant 
         $updateURL = $this->router->getAnimalUpdateURL($id);
         $deleteURL = $this->router->getAnimalDeleteURL($id);
         $template = <<<HTML

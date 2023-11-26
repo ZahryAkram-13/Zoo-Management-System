@@ -48,6 +48,11 @@ final class Router
         return "?action=deleteConfirmed&id=" . $id;
     }
 
+    // function getJsonURL($id)
+    // {
+    //     return "?action=json&id=" . $id;
+    // }
+
 
 
 
@@ -129,6 +134,12 @@ final class Router
                         $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : -13;
                         $controller->deleteConfirmed($id);
                         break;
+                    case 'json':
+                        $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : -13;
+                        $controller->setView(new ViewJSON());
+                        $controller->showJSON($id);
+                        
+                        break;
 
                     default:
                         $controller->view->prepareSomethingWentWrongPage();
@@ -140,7 +151,7 @@ final class Router
 
 
         } catch (\Throwable $th) {
-            echo "unexpected error " . $th;
+            $controller->view->prepareSomethingWentWrongPage();
         }
 
         $controller->view->render();

@@ -4,11 +4,16 @@ require_once 'view/View.php';
 require_once 'model/Animal.php';
 require_once 'model/AnimalStorage.php';
 require_once 'model/AnimalBuilder.php';
+require_once 'view/ViewJson.php';
 
 final class Controller
 {
     public $view;
     public $animalStorage;
+
+    public function setView($view){
+        $this->view = $view;
+    }
 
     function __construct(View $view, AnimalStorage $animalStorage)
     {
@@ -131,6 +136,23 @@ final class Controller
         }
         $this->view->couldNotDeletePage();
 
+    }
+
+    public function showJSON($id){
+        if($this->view instanceof ViewJSON){
+            $animal = $this->animalStorage->read($id);
+        if (!is_null($animal)) {
+            ViewJSON::renderJSON($animal);
+            exit;
+        }
+        ViewJSON::inkownJSON();
+        exit;
+        }
+        else{
+            $this->view->prepareSomethingWentWrongPage();
+        }
+        
+        
     }
 
 
