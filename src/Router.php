@@ -4,10 +4,10 @@ require_once 'control/Controller.php';
 require_once 'model/AnimalStorageStub.php';
 final class Router
 {
-
+    const BASE_URL = '/exoMVCR/site.php/';
     function getAnimalURL($id)
     {
-        return '?id=' . $id;
+        return  Router::BASE_URL . $id;
     }
 
     function getAnimalsURL()
@@ -17,12 +17,12 @@ final class Router
 
     function getHomeURL()
     {
-        return "/mvcr/site.php";
+        return Router::BASE_URL;
     }
 
     function getAnimalCreationURL()
     {
-        return "?action=newAnimal";
+        return Router::BASE_URL . "?action=newAnimal";
     }
     function getAnimalSaveURL()
     {
@@ -61,7 +61,7 @@ final class Router
      * pour preciser la nature du message. 
      * @param string $message 
      * @param string $url 
-     * @param string $url 
+     * @param string $flag 
      */
     function POSTredirect($url, $message, $flag)
     {
@@ -86,24 +86,24 @@ final class Router
 
         try {
 
-            if (key_exists('id', $_GET)) {
-                $id = View::htmlesc($_GET['id']);
-                $controller->showInformation($id);
+            // if (key_exists('id', $_GET)) {
+            //     $id = View::htmlesc($_GET['id']);
+            //     $controller->showInformation($id);
 
-            } else if (key_exists('animals', $_GET)) {
+            // } else 
+            if (key_exists('animals', $_GET)) {
                 $controller->showList();
 
             } else if (empty($pathInfo)) {
                 $controller->view->preparePageAcueil();
             } else {
-                $id = basename($pathInfo);
+                $id = View::htmlesc(basename($pathInfo));
                 $controller->showInformation($id);
 
             }
 
             if (key_exists("action", $_GET)) {
                 $action = View::htmlesc($_GET['action']);
-                //var_dump($_POST);
                 switch ($action) {
                     case 'newAnimal':
                         $controller->newAnimal(new AnimalBuilder($_POST, array()));
@@ -116,7 +116,6 @@ final class Router
                         break;
                     case 'updateAnimal':
                         if (key_exists("id", $_POST) || key_exists('id', $_GET)) {
-                            //$id = htmlspecialchars($_POST['id']);
                             $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : -13;
                             $controller->updateAnimal($id);
                         }
@@ -138,7 +137,7 @@ final class Router
                         $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : -13;
                         $controller->setView(new ViewJSON());
                         $controller->showJSON($id);
-                        
+
                         break;
 
                     default:

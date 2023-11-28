@@ -1,6 +1,11 @@
 <?php
 final class ViewJSON
 {
+
+    /**
+     * une fonction qui change la form du document renvoyé en format json et affich un objet json dèun animal
+     * @param Animal $animal
+     */
     public static function renderJSON($animal){
         header('Content-Type: application/json');
         $nom = View::htmlesc($animal->getName());

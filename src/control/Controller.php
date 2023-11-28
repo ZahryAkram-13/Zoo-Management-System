@@ -11,7 +11,8 @@ final class Controller
     public $view;
     public $animalStorage;
 
-    public function setView($view){
+    public function setView($view)
+    {
         $this->view = $view;
     }
 
@@ -30,7 +31,7 @@ final class Controller
     {
         $animal = $this->animalStorage->read($id);
         if ($animal != null) {
-            $this->view->prepareAnimalPage($animal);
+            $this->view->prepareAnimalPage($animal, $id);
         } else {
             $this->view->prepareUnknownAnimalPage();
         }
@@ -79,9 +80,9 @@ final class Controller
         $animal = $this->animalStorage->read($id);
         if (!is_null($animal)) {
             $data = array();
-            $data[AnimalBuilder::NAME_REF] = $animal->getName();
-            $data[AnimalBuilder::ESPECE_REF] = $animal->getEspece();
-            $data[AnimalBuilder::AGE_REF] = $animal->getAge();
+            $data[AnimalBuilder::NAME_REF] = View::htmlesc($animal->getName());  //deja verifié lors de la creation
+            $data[AnimalBuilder::ESPECE_REF] = View::htmlesc($animal->getEspece());
+            $data[AnimalBuilder::AGE_REF] = View::htmlesc($animal->getAge());
 
             $builder = new AnimalBuilder($data, array());
             $this->view->prepareAnimalUpdatePage($builder, $id);
@@ -137,22 +138,25 @@ final class Controller
         $this->view->couldNotDeletePage();
 
     }
-
-    public function showJSON($id){
-        if($this->view instanceof ViewJSON){
+    /**
+     * la fonction qui afficher les infos d'un animal en format json
+     * @param string $id
+     */
+    public function showJSON($id)
+    {
+        if ($this->view instanceof ViewJSON) {
             $animal = $this->animalStorage->read($id);
-        if (!is_null($animal)) {
-            ViewJSON::renderJSON($animal);
+            if (!is_null($animal)) {
+                ViewJSON::renderJSON($animal);
+                exit;
+            }
+            ViewJSON::inkownJSON();
             exit;
-        }
-        ViewJSON::inkownJSON();
-        exit;
-        }
-        else{
+        } else {
             $this->view->prepareSomethingWentWrongPage();
         }
-        
-        
+
+
     }
 
 

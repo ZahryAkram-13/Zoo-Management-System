@@ -57,11 +57,13 @@ final class View
      */
     function getAnimalPageTemplate(Animal $animal, $id)
     {
+        $espece = View::htmlesc($animal->getEspece());
+        $age = View::htmlesc($animal->getAge());
         $template = <<<HTML
                         <div class="block">
                         <p class="subtitle is-5">
-                            est un animal trés adorable ,c'est un <strong>{$animal->getEspece()}</strong> 
-                            et il a <strong>{$animal->getAge()}</strong> ans.  <br> 
+                            est un animal trés adorable ,c'est un <strong>{$espece}</strong> 
+                            et il a <strong>{$age}</strong> ans.  <br> 
                             ces poils sont blancs tachés de noirs. Il a une jolie moustache qui lui cache la moitié de son visage à 
                             l'extrémité de ses pattes fines. <br>
                             il a des griffes pointues il les utilise pour se défendre, il est gentil et mignon il n'aime que jouer.
@@ -76,13 +78,10 @@ final class View
 
     /**
      * une fonction qui prepare l'affichage des infos d'un animal.
-     *
      * @param Animal $animal une instance d'un animal
-     * 
      */
-    function prepareAnimalPage(Animal $animal)
+    function prepareAnimalPage(Animal $animal, $id)
     {
-        $id = key_exists('id', $_GET) ? View::htmlesc($_GET['id']) : '';
 
         $this->title = View::htmlesc($animal->getName());
         $this->content = $this->getAnimalPageTemplate($animal, $id);
@@ -105,7 +104,7 @@ final class View
     function preparePageAcueil()
     {
         $this->title = 'Accueil';
-        $this->content = "welcome to the zooo, you' ll find here all kind of animals";
+        $this->content = "Welcome to the zooo, you' ll find here all kind of animals";
     }
 
     /**
@@ -113,21 +112,20 @@ final class View
      */
     function getMenuTemplate()
     {
-        $menu = '<div id="navbarBasicExample" class="navbar-menu">
-                  <div class="navbar-start">';
+        $menu = '<nav class="navbar is-dark">
+                 <div class="navbar-menu "><div class="navbar-start">';
         foreach ($this->menu as $key => $url) {
             $menu .= <<<HTML
                         <a class="navbar-item" href="{$url}">{$key}</a>
                     HTML;
         }
-        $menu .= '</div></div>';
-
+        $menu .= '</div></div></nav>';
         return $menu;
     }
     /**
      * une fonction qui retourne une maquette html representant un message de feedback.
      */
-    function getFeedbakMessage()
+    function getFeedbackMessage()
     {
         if (!is_null($_SESSION) && key_exists('feedback', $_SESSION)) {
             $feedback = $_SESSION['feedback'];
@@ -168,42 +166,38 @@ final class View
         return $template;
     }
 
-    function getScriptTemplate()
-    {
-        $script = <<<HTML
-       
-        HTML;
-        return $script;
-    }
-
     /**
      * une fonction qui retourne une maquette html representant une liste des animaux 
      * @param array $animals une liste des animaux
      */
     function prepareListPage($animals)
     {
-        $this->title = 'all Animals';
+        $this->title = 'All Animals';
         $this->content = '';
-
-        foreach ($animals as $key => $animal) {
-            $dist = $this->router->getAnimalURL($key);
-            $jsKey = json_encode($key);
-            $name = View::htmlesc($animal->getName());
-            $this->content .= <<<HTML
-                            <div class="box">
-                                <a class="is-size-2" href="{$dist}">{$name}</a> 
-                                <p>
-                                <button id="getDetails"  onclick='getDetails({$jsKey}, this)' class="button is-text">details</button>
-                                <div class="notification is-link" id={$jsKey} style="display: none;">
+        if (count($animals) > 0) {
+            foreach ($animals as $key => $animal) {
+                $dist = $this->router->getAnimalURL($key);
+                $jsKey = json_encode($key);
+                $name = View::htmlesc($animal->getName());
+                $this->content .= <<<HTML
+                                <div class="box">
+                                    <a class="is-size-2" href="{$dist}">{$name}</a> 
+                                    <p>
+                                    <button id="getDetails"  onclick='getDetails({$jsKey}, this)' class="button is-text">details</button>
+                                    <div class="notification is-link" id={$jsKey} style="display: none;">
+                                    </div>
+                                    </p>
+                                    {$this->getUpdateDeleteTemplate($key)}        
                                 </div>
-                               
-                                </p>
-                                {$this->getUpdateDeleteTemplate($key)}        
-                            </div>
-             HTML;
+                 HTML;
 
+            }
+            $this->content;
         }
-        $this->content;
+        else{
+            $this->content = 'Sorry, no animals for today.';
+        }
+
 
     }
 
@@ -293,7 +287,7 @@ final class View
         $this->title = 'Delete Animal';
         $this->content = <<<HTML
                         <p class="subtitle is-4">
-                        <strong> delete animal : {$name}</strong> 
+                        <strong> delete : {$name}</strong> 
                         </p>
                         {$this->getDeleteForm($url)}
         HTML;
@@ -308,8 +302,8 @@ final class View
     {
         $errors = $builder->getErrors();
         $data = $builder->getData();
-
         $updatedURL = $this->router->getUpdatedURL($id);
+
         $this->title = 'Update Animal';
         $this->content = $this->getFormTemplate($data, $errors, $updatedURL);
 
@@ -337,7 +331,7 @@ final class View
 
     public function couldNotDeletePage()
     {
-        $this->title = 'Ooops we could not delete';
+        $this->title = 'Ooops we could not delete it';
         $this->content = 'Please try later';
     }
 
@@ -386,7 +380,6 @@ final class View
         if (is_null($this->title) || is_null($this->content)) {
             $this->prepareSomethingWentWrongPage();
         } else {
-            //include 'template.html';
             include 'templateBulma.html';
 
         }
