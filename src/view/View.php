@@ -338,6 +338,12 @@ final class View
         $this->content = 'Please try later';
     }
 
+    public function couldNotUpdatePage()
+    {
+        $this->title = 'Ooops we could not update it';
+        $this->content = 'Please try later';
+    }
+
     /**
      * une fonction qui prepare un feedback creation et redirige vers la page d'animal
      * @param string $id id d'animal

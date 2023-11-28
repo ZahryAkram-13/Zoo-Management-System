@@ -106,8 +106,11 @@ final class Controller
                 $this->view->displayAnimalUpdatedSuccess($id);
                 return;
             }
+            $this->view->couldNotUpdatePage();
+        }else{
+            $this->view->prepareAnimalUpdatePage($builder, $id);
         }
-        $this->saveNewAnimal($data, array());
+        
     }
     /**
      * une fonction qui renvoie un formulaire pour supression dun animal (un button).

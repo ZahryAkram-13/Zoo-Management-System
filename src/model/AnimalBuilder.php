@@ -111,9 +111,11 @@ final class AnimalBuilder
     {
         return strlen($espece) >= 2 && $this->isNotEmptyAndAlphanumeric($espece);
     }
+
+    
     private function isValidAge($age)
     {
-        return $this->isNotEmptyAndAlphanumeric($age) && is_numeric($age) >= 2;
+        return $this->isNotEmptyAndAlphanumeric($age) && preg_match('/^[1-9][0-9]*$/', $age) && $age >= 2;
 
     }
 
