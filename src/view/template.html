@@ -1,28 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"> -->
+    <title>
+        <?= $this->title ?>
+    </title>
+
+    <script>
+
+
+        function insertElement(id, data, button) {
+            const block = document.getElementById(id);
+            //console.log(block);
+            const isVisible = block.style.display !== 'none';
+            if (isVisible) {
+                block.style.display = 'none';
+                block.innerText = '';
+                button.innerText = 'details';
+
+            }
+            else {
+                const strong = document.createElement('strong');
+                strong.textContent = 'espece: ' + data.espece + ' age: ' + data.age;
+                block.appendChild(strong);
+                block.style.display = 'block';
+                console.log(block);
+                button.innerText = 'Hide details';
+
+            }
+
+        }
+        function getDetails(id, button) {
+
+            //https://dev-zahry211.users.info.unicaen.fr/exoMVCR/site.php?action=json&id=chopin
+            const URL = 'https://dev-zahry211.users.info.unicaen.fr/exoMVCR/site.php?action=json&id=';
+            var xhr = new XMLHttpRequest();
+            console.log(URL + id);
+            xhr.open('Get', URL + id, true);
+            xhr.onload = function () {
+                if (xhr.status >= 200) {
+                    let response = JSON.parse(xhr.responseText);
+                    console.log(response);
+                    insertElement(id, response, button);
+
+
+                }
+                else {
+                    console.log('request failed', xhr.status);
+                }
+
+            };
+            xhr.onerror = function () {
+                console.error('Erreur réseau');
+            };
+            xhr.send();
+        }
+
+
+
+    </script>
+
+
+</head>
 
 <body>
-  <?= $this->getFeedbakMessage();?>
-    <!-- <div>
-      <ul>
-        
-        <?php
-        foreach($this->menu as $key => $url){
-            echo <<<HTML
-                <li class="">
-                    <a class="" href={$url}>{$key}</a>
-                </li>
-                HTML;
-         } 
-    ?>
-      </ul>
-    </div> -->
-    
     <?php echo $this->getMenuTemplate(); ?>
+    <section class="section is-medium">
 
-    <div class="box">
-      <h1 class="title"><?= $this->title ?></h1>
-      <h2 class="subtitle"><?= $this->content ?></h2>
-    </div>
+        <?php
+            echo $this->getFeedbackMessage();
+            unset($_SESSION['feedback']);
+         ?>
 
-  </body>
+
+        <h1 class="title is-1">
+            <?= $this->title ?>
+        </h1>
+        <p class="subtitle is-4">
+            <?= $this->content ?>
+        </p>
+    </section>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>site</strong> by <a href="https://webmail.unicaen.fr/">ZAHRY AKRAM</a>. made with love , coffee and long nights without sleep.
+            </p>
+        </div>
+    </footer>
+
+</body>
+
 </html>

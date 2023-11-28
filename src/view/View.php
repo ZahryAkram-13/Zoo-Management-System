@@ -193,8 +193,7 @@ final class View
 
             }
             $this->content;
-        }
-        else{
+        } else {
             $this->content = 'Sorry, no animals for today.';
         }
 
@@ -215,6 +214,10 @@ final class View
      */
     public function getFormTemplate($data, $errors, $url)
     {
+
+        /**
+         *  les champs sont deja désinfecter a l'entrée, pas besoin de réutiliser View::htmlesc() 
+        */
 
         $name = key_exists(AnimalBuilder::NAME_REF, $data) ? $data[AnimalBuilder::NAME_REF] : '';
         $espece = key_exists(AnimalBuilder::ESPECE_REF, $data) ? $data[AnimalBuilder::ESPECE_REF] : '';
@@ -380,7 +383,9 @@ final class View
         if (is_null($this->title) || is_null($this->content)) {
             $this->prepareSomethingWentWrongPage();
         } else {
-            include 'templateBulma.html';
+            include 'templateBulma.html'; //fichier html avec decoration css
+            //include 'template.html';    //fichier html sans css
+
 
         }
 

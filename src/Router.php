@@ -12,7 +12,7 @@ final class Router
 
     function getAnimalsURL()
     {
-        return '?animals';
+        return Router::BASE_URL . '?animals';
     }
 
     function getHomeURL()
@@ -45,7 +45,7 @@ final class Router
 
     function getDeleteConfirmURL($id)
     {
-        return "?action=deleteConfirmed&id=" . $id;
+        return Router::BASE_URL . "?action=deleteConfirmed&id=" . $id;
     }
 
     // function getJsonURL($id)
