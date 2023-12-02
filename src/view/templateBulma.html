@@ -24,10 +24,9 @@
             }
             else {
                 const strong = document.createElement('strong');
-                strong.textContent = 'espece: ' + data.espece + ' age: ' + data.age;
+                strong.textContent = 'espece: ' + data.espece + 'age: ' + data.age;
                 block.appendChild(strong);
                 block.style.display = 'block';
-                console.log(block);
                 button.innerText = 'Hide details';
 
             }
@@ -40,9 +39,10 @@
             var xhr = new XMLHttpRequest();
             console.log(URL + id);
             xhr.open('Get', URL + id, true);
+            xhr.responseType =  'json';
             xhr.onload = function () {
                 if (xhr.status >= 200) {
-                    let response = JSON.parse(xhr.responseText);
+                    let response = xhr.response; //JSON.parse(xhr.responseText);
                     console.log(response);
                     insertElement(id, response, button);
 

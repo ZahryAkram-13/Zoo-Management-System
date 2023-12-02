@@ -64,9 +64,11 @@ final class View
                         <p class="subtitle is-5">
                             est un animal trés adorable ,c'est un <strong>{$espece}</strong> 
                             et il a <strong>{$age}</strong> ans.  <br> 
-                            ces poils sont blancs tachés de noirs. Il a une jolie moustache qui lui cache la moitié de son visage à 
+                            ces poils sont blancs tachés de noirs. Il a une jolie moustache
+                            qui lui cache la moitié de son visage à 
                             l'extrémité de ses pattes fines. <br>
-                            il a des griffes pointues il les utilise pour se défendre, il est gentil et mignon il n'aime que jouer.
+                            il a des griffes pointues il les utilise pour se défendre, il est gentil et
+                            mignon il n'aime que jouer.
                         </p>
                 
                         {$this->getUpdateDeleteTemplate($id)}  
@@ -152,11 +154,11 @@ final class View
         $deleteURL = $this->router->getAnimalDeleteURL($id);
         $template = <<<HTML
                          <div class="buttons">
-                            <form class="" action={$updateURL} method="post">
+                            <form class="" action="{$updateURL}" method="post">
                             <input type="hidden" name="id" value="{$id}">
                             <button class="button is-warning m-1">Update</button>
                             </form>
-                            <form class="" action={$deleteURL} method="post">
+                            <form class="" action="{$deleteURL}" method="post">
                             <input type="hidden" name="id" value="{$id}">
                             <button class="button is-danger m-1">Delete</button>
                             </form>
@@ -207,6 +209,21 @@ final class View
     // }
 
     /**
+     * une fonction qui prepare la page de la creation d'un animal
+     * @param AnimalBuilder $builder 
+     */
+    function prepareAnimalCreationPage(AnimalBuilder $builder)
+    {
+        $errors = $builder->getErrors();
+        $data = $builder->getData();
+
+        $saveAnimalURL = $this->router->getAnimalSaveURL();
+        $this->title = 'Add Animal';
+        $this->content = $this->getFormTemplate($data, $errors, $saveAnimalURL);
+
+    }
+
+    /**
      * une fonction qui retourne une maquette html representant un formulaire soit remplis par des info soit vide
      * @param array $data les champs du formulaire
      * @param array $errors les erreurs qui puissent se produire
@@ -217,7 +234,7 @@ final class View
 
         /**
          *  les champs sont deja désinfecter a l'entrée, pas besoin de réutiliser View::htmlesc() 
-        */
+         */
 
         $name = key_exists(AnimalBuilder::NAME_REF, $data) ? $data[AnimalBuilder::NAME_REF] : '';
         $espece = key_exists(AnimalBuilder::ESPECE_REF, $data) ? $data[AnimalBuilder::ESPECE_REF] : '';
@@ -228,28 +245,26 @@ final class View
         $age_err = key_exists(AnimalBuilder::AGE_REF, $errors) ? $errors[AnimalBuilder::AGE_REF] : '';
 
         $form = <<<HTML
-                <form class="box" action={$url} method="POST">
+                <form class="box" action="{$url}" method="POST">
                 <label class="label" for="name">Name</label>
                 <div class="control">
-                    <input name="name" class="input" type="text" value="{$name}" placeholder="name" required>
+                    <input name="name" id="name" class="input" type="text" value="{$name}" placeholder="name" required>
                     <p class="help is-danger">
                     {$name_err}
                     </p>
                 </div>
                 <label class="label" for="espece">Espece</label>
                 <div class="control">
-                    <input name="espece" class="input" type="text" value="{$espece}" placeholder="espece" required>
+                    <input name="espece" id="espece" class="input" type="text" value="{$espece}" placeholder="espece" required>
                     <p class="help is-danger">
                     {$espece_err}
-
                     </p>
                 </div>
                 <label for="age" class="label">Age</label>
                 <div class="control">
-                    <input name="age" class="input" type="number" value="{$age}" placeholder="age" required>
+                    <input name="age" id="age" class="input" type="number" value="{$age}" placeholder="age" required>
                     <p class="help is-danger">
                     {$age_err}
-
                     </p>
                 </div>
 
@@ -311,20 +326,7 @@ final class View
         $this->content = $this->getFormTemplate($data, $errors, $updatedURL);
 
     }
-    /**
-     * une fonction qui prepare la page de la creation d'un animal
-     * @param AnimalBuilder $builder 
-     */
-    function prepareAnimalCreationPage(AnimalBuilder $builder)
-    {
-        $errors = $builder->getErrors();
-        $data = $builder->getData();
 
-        $saveAnimalURL = $this->router->getAnimalSaveURL();
-        $this->title = 'Add Animal';
-        $this->content = $this->getFormTemplate($data, $errors, $saveAnimalURL);
-
-    }
 
     public function prepareSomethingWentWrongPage()
     {

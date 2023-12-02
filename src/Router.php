@@ -4,10 +4,10 @@ require_once 'control/Controller.php';
 require_once 'model/AnimalStorageStub.php';
 final class Router
 {
-    const BASE_URL = '/exoMVCR/site.php/';
+    const BASE_URL = '/exoMVCR/site.php';
     function getAnimalURL($id)
     {
-        return  Router::BASE_URL . $id;
+        return  Router::BASE_URL . "/" . $id;
     }
 
     function getAnimalsURL()
@@ -26,21 +26,21 @@ final class Router
     }
     function getAnimalSaveURL()
     {
-        return "?action=saveAnimal";
+        return Router::BASE_URL . "?action=saveAnimal";
     }
 
     function getAnimalUpdateURL($id)
     {
-        return "?action=updateAnimal&id=" . $id;
+        return Router::BASE_URL . "?action=updateAnimal&id=" . $id;
     }
     function getUpdatedURL($id)
     {
-        return "?action=updated&id=" . $id;
+        return Router::BASE_URL . "?action=updated&id=" . $id;
     }
 
     function getAnimalDeleteURL($id)
     {
-        return "?action=deleteAnimal&id=" . $id;
+        return Router::BASE_URL . "?action=deleteAnimal&id=" . $id;
     }
 
     function getDeleteConfirmURL($id)
